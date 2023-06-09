@@ -10,50 +10,10 @@ import { CustomTree } from './CustomTree';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTodoModal from './CreateTodoModal';
+import { defaultData } from '../mock/defaultData';
 
 export default function TodoList() {
-  const [todos, setTodos] = React.useState<Todo[]>([
-    {
-      id: '1',
-      name: 'Купить продукты',
-      text: 'Купить продукты',
-      completed: false,
-      children: [
-        {
-          id: '2',
-          name: 'Купить хлеб',
-          completed: false,
-          text: 'Купить батон и ржаной хлеб.',
-        },
-        {
-          id: '3',
-          name: 'Купить молочные продукты',
-          completed: false,
-          text: 'молоко, сметана, сливки ',
-        },
-      ],
-    },
-    {
-      id: '4',
-      name: 'Уборка',
-      completed: false,
-      text: 'Уборка в доме',
-      children: [
-        {
-          id: '5',
-          name: 'Пропылесосить',
-          completed: false,
-          text: 'Пропылесосить',
-        },
-        {
-          id: '6',
-          name: 'Протереть пыль',
-          completed: false,
-          text: 'Протереть пыль на всех полках и протереть пыль на компьютере.',
-        },
-      ],
-    },
-  ]);
+  const [todos, setTodos] = React.useState<Todo[]>(defaultData);
 
   const [openModal, setOpenModal] = React.useState(false);
 
@@ -64,6 +24,11 @@ export default function TodoList() {
   );
 
   const handleAddTodo = () => {
+    setCurrentTodo(null);
+    setOpenModal(true);
+  };
+
+  const handleAddSubTodo = () => {
     setOpenModal(true);
   };
 
@@ -117,14 +82,11 @@ export default function TodoList() {
   const deleteCompletedTodos = (todos: Todo[]) => {
     return todos.filter((todo: Todo) => {
       if (todo.completed) {
-        // Удаляем текущую задачу, если она завершена
         return false;
       }
       if (Array.isArray(todo.children)) {
-        // Рекурсивно вызываем функцию для проверки подзадач
         todo.children = deleteCompletedTodos(todo.children);
       }
-      // Сохраняем текущую задачу в списке
       return true;
     });
   };
@@ -241,7 +203,7 @@ export default function TodoList() {
               variant="outlined"
               disabled={!currentTodo}
               sx={{ textTransform: 'none' }}
-              onClick={handleAddTodo}>
+              onClick={handleAddSubTodo}>
               Добавить подзадачу
             </Button>
           </Box>
