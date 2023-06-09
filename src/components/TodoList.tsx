@@ -8,47 +8,48 @@ import { Box, Checkbox, Grid, Fab, Button } from '@mui/material';
 import Todo from '../types/Todo';
 import { CustomTree } from './CustomTree';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTodoModal from './CreateTodoModal';
 
 export default function TodoList() {
   const [todos, setTodos] = React.useState<Todo[]>([
     {
       id: '1',
-      name: 'first',
-      text: 'first text',
+      name: 'Купить продукты',
+      text: 'Купить продукты',
       completed: false,
       children: [
         {
-          id: '1.1',
-          name: 'first child 1',
+          id: '2',
+          name: 'Купить хлеб',
           completed: false,
-          text: 'first child 1 text',
+          text: 'Купить батон и ржаной хлеб.',
         },
         {
-          id: '1.2',
-          name: 'first child 2',
+          id: '3',
+          name: 'Купить молочные продукты',
           completed: false,
-          text: 'first child 2 text',
+          text: 'молоко, сметана, сливки ',
         },
       ],
     },
     {
-      id: '2',
-      name: 'second',
+      id: '4',
+      name: 'Уборка',
       completed: false,
-      text: 'second text',
+      text: 'Уборка в доме',
       children: [
         {
-          id: '2.1',
-          name: 'second child 1',
+          id: '5',
+          name: 'Пропылесосить',
           completed: false,
-          text: 'second child 1 text',
+          text: 'Пропылесосить',
         },
         {
-          id: '2.2',
-          name: 'second child 2',
+          id: '6',
+          name: 'Протереть пыль',
           completed: false,
-          text: 'second child 2 text',
+          text: 'Протереть пыль на всех полках и протереть пыль на компьютере.',
         },
       ],
     },
@@ -113,6 +114,25 @@ export default function TodoList() {
     return `${timestamp}-${random}`;
   };
 
+  const deleteCompletedTodos = (todos: Todo[]) => {
+    return todos.filter((todo: Todo) => {
+      if (todo.completed) {
+        // Удаляем текущую задачу, если она завершена
+        return false;
+      }
+      if (Array.isArray(todo.children)) {
+        // Рекурсивно вызываем функцию для проверки подзадач
+        todo.children = deleteCompletedTodos(todo.children);
+      }
+      // Сохраняем текущую задачу в списке
+      return true;
+    });
+  };
+
+  const handleDeleteCompletedTodos = () => {
+    setTodos((prevTodos) => deleteCompletedTodos(prevTodos));
+  };
+
   const handleCheckboxClick = (e: React.MouseEvent<HTMLButtonElement>, todoId: string) => {
     e.stopPropagation();
     const updatedTodos = toggleTodoCompleted(todos, todoId);
@@ -121,7 +141,7 @@ export default function TodoList() {
 
   React.useEffect(() => {
     console.log(todos);
-  }, todos);
+  }, [todos]);
 
   const toggleTodoCompleted = (todos: Todo[], todoId: string): Todo[] => {
     return todos.map((todo) => {
@@ -211,13 +231,11 @@ export default function TodoList() {
             </TreeView>
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <Fab
-              color="primary"
-              size="small"
-              aria-label="add"
-              sx={{ marginLeft: '20px' }}
-              onClick={handleAddTodo}>
+            <Fab color="primary" size="small" aria-label="add" onClick={handleAddTodo}>
               <AddIcon fontSize="small" />
+            </Fab>
+            <Fab color="error" size="small" aria-label="add" onClick={handleDeleteCompletedTodos}>
+              <DeleteIcon fontSize="small" />
             </Fab>
             <Button
               variant="outlined"
