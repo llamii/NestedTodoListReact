@@ -1,5 +1,3 @@
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
 import TodoList from './components/TodoList';
 import { Container, Typography } from '@mui/material';
 
