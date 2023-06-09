@@ -7,6 +7,7 @@ export default class TodoStore {
   openModal = false;
   currentTodo: Todo | null = null;
 
+
   constructor() {
     makeObservable(this, {
       todos: observable,
@@ -65,6 +66,7 @@ export default class TodoStore {
     }
 
     this.openModal = false;
+
     this.updateLocalStorage();
   };
 

@@ -20,10 +20,9 @@ const TodoList = observer(function TodoList() {
   const { todos, openModal, currentTodo } = todoStore;
 
   const handleAddTodo = () => {
-    todoStore.currentTodo = null;
     todoStore.openModal = true;
+    todoStore.currentTodo = null;
   };
-
   const handleAddSubTodo = () => {
     todoStore.openModal = true;
   };
