@@ -21,9 +21,11 @@ const CreateTodoModal: React.FC<CreateTodoModalProps> = ({ open, onClose, onSave
   const [newTodoText, setNewTodoText] = useState('');
 
   const handleSaveTodo = () => {
-    onSave(newTodoName, newTodoText, parentId);
-    setNewTodoName('');
-    setNewTodoText('');
+    if (newTodoName && newTodoText) {
+      onSave(newTodoName, newTodoText, parentId);
+      setNewTodoName('');
+      setNewTodoText('');
+    }
   };
 
   return (
