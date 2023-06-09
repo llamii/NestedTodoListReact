@@ -3,41 +3,41 @@ import Todo from '../types/Todo';
 export const defaultData: Todo[] = [
   {
     id: '1',
-    name: 'Купить продукты',
-    text: 'Купить продукты',
+    name: '🏪Buy products ',
+    text: 'Buy some products',
     completed: false,
     children: [
       {
         id: '2',
-        name: 'Купить хлеб',
+        name: '🍞 Buy bread 🍞',
         completed: false,
-        text: 'Купить батон и ржаной хлеб.',
+        text: 'Buy toast bread & black bread',
       },
       {
         id: '3',
-        name: 'Купить молочные продукты',
+        name: '🥛 Buy dairy products',
         completed: false,
-        text: 'молоко, сметана, сливки ',
+        text: 'Milk, cheese, yogurt and butter',
       },
     ],
   },
   {
     id: '4',
-    name: 'Уборка',
+    name: '🧽 Cleaning',
     completed: false,
-    text: 'Уборка в доме',
+    text: '🧹 Clean the house',
     children: [
       {
         id: '5',
-        name: 'Пропылесосить',
+        name: '🧹 Sweeping',
         completed: false,
-        text: 'Пропылесосить',
+        text: 'To sweep the floors',
       },
       {
         id: '6',
-        name: 'Протереть пыль',
+        name: '💨 Wipe the dust',
         completed: false,
-        text: 'Протереть пыль на всех полках и протереть пыль на компьютере.',
+        text: 'Wipe dust on all shelves and on the computer',
       },
     ],
   },
