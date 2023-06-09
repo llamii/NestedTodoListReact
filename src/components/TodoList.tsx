@@ -12,6 +12,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTodoModal from './CreateTodoModal';
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
+import { styled } from '@mui/system';
 
 const todoStore = new TodoStore();
 
@@ -54,19 +55,10 @@ const TodoList = observer(function TodoList() {
         key={todo.id}
         nodeId={todo.id}
         label={
-          <div
-            onClick={() => (todoStore.currentTodo = todo)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingRight: '10px',
-            }}>
-            <span style={{ textDecoration: todo.completed ? 'line-through ' : '' }}>
-              {todo.name}
-            </span>
+          <StyledTodo onClick={() => (todoStore.currentTodo = todo)}>
+            <StyledTodoSpan isCompleted={todo.completed}>{todo.name}</StyledTodoSpan>
             <Checkbox onClick={(e) => handleCheckboxClick(e, todo.id)} checked={todo.completed} />
-          </div>
+          </StyledTodo>
         }>
         {Array.isArray(todo.children) ? renderTree(todo.children) : null}
       </CustomTreeItem>
@@ -74,77 +66,42 @@ const TodoList = observer(function TodoList() {
 
   return (
     <Container maxWidth="lg">
-      <Box display="flex" justifyContent="center" height="auto">
-        <Grid container sx={{ display: 'flex', alignItems: 'stretch' }}>
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            sx={{
-              overflowY: 'hidden',
-              backgroundColor: '#FFFFFF',
-              paddingBottom: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-            }}>
+      <StyledBox>
+        <StyledGrid container>
+          <StyledLeftContainer item xs={12} sm={4}>
             <Box p={2}>
-              <TreeView
+              <StyledTreeView
                 aria-label="rich object"
                 defaultCollapseIcon={<ExpandMoreIcon />}
                 defaultExpanded={['root']}
-                defaultExpandIcon={<ChevronRightIcon />}
-                sx={{
-                  height: 'auto',
-                  flexGrow: 1,
-                  maxWidth: 400,
-                  overflow: 'hidden',
-                  marginRight: '10px',
-                }}>
+                defaultExpandIcon={<ChevronRightIcon />}>
                 {renderTree(todos)}
-              </TreeView>
+              </StyledTreeView>
             </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }}>
-              <Fab
-                color="primary"
-                sx={{ boxShadow: 'none' }}
-                size="small"
-                aria-label="add"
-                onClick={handleAddTodo}>
+            <StyledControlButtons>
+              <StyledFab color="primary" size="small" aria-label="add" onClick={handleAddTodo}>
                 <AddIcon fontSize="small" />
-              </Fab>
-              <Fab
+              </StyledFab>
+              <StyledFab
                 color="error"
-                sx={{ boxShadow: 'none' }}
                 size="small"
                 aria-label="add"
                 onClick={handleDeleteCompletedTodos}>
                 <DeleteIcon fontSize="small" />
-              </Fab>
-              <Fab
-                color="secondary"
-                sx={{ boxShadow: 'none' }}
-                size="small"
-                aria-label="add"
-                onClick={handleAddSubTodo}>
+              </StyledFab>
+              <StyledFab color="secondary" size="small" aria-label="add" onClick={handleAddSubTodo}>
                 <SubdirectoryArrowRightIcon fontSize="small" />
-              </Fab>
-            </Box>
+              </StyledFab>
+            </StyledControlButtons>
             <CreateTodoModal
               open={openModal}
               onClose={handleModalClose}
               onSave={handleSaveTodo}
               parentId={currentTodo?.id || null}
             />
-          </Grid>
+          </StyledLeftContainer>
           <Grid item xs={12} sm={8}>
-            <Box
-              p={2}
-              sx={{
-                backgroundColor: '#DCE0E1',
-                height: '70vh',
-                overflowWrap: 'break-word',
-              }}>
+            <StyledRightContainerBox p={2}>
               <Typography variant="h5" component="h2" gutterBottom fontSize={'32px'}>
                 {currentTodo?.name}
               </Typography>
@@ -152,12 +109,69 @@ const TodoList = observer(function TodoList() {
               <Box height="100%">
                 <p>{currentTodo?.text}</p>
               </Box>
-            </Box>
+            </StyledRightContainerBox>
           </Grid>
-        </Grid>
-      </Box>
+        </StyledGrid>
+      </StyledBox>
     </Container>
   );
 });
+
+const StyledBox = styled(Box)`
+  display: flex;
+  justify-content: center;
+  height: auto;
+`;
+
+const StyledGrid = styled(Grid)`
+  display: flex;
+  align-items: stretch;
+`;
+
+const StyledLeftContainer = styled(Grid)`
+  overflow-y: hidden;
+  background-color: #ffffff;
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const StyledTreeView = styled(TreeView)`
+  height: auto;
+  flex-grow: 1;
+  max-width: 400;
+  overflow: hidden;
+  margin-right: '10px';
+`;
+
+const StyledControlButtons = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+`;
+
+const StyledFab = styled(Fab)`
+  box-shadow: none;
+`;
+
+const StyledRightContainerBox = styled(Box)`
+  background-color: #dce0e1;
+  height: 70vh;
+  overflow-wrap: break-word;
+`;
+
+const StyledTodo = styled('div')`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 10px;
+`;
+
+const StyledTodoSpan = styled('span')<{
+  isCompleted: boolean;
+}>(({ isCompleted }) => ({
+  textDecoration: `${isCompleted ? 'line-through ' : ''}`,
+}));
 
 export default TodoList;
