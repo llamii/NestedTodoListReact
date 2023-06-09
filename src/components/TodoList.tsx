@@ -11,6 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTodoModal from './CreateTodoModal';
 import { defaultData } from '../mock/defaultData';
+import CheckIcon from '@mui/icons-material/Check';
 
 export default function TodoList() {
   const [todos, setTodos] = React.useState<Todo[]>(defaultData);
@@ -101,10 +102,6 @@ export default function TodoList() {
     setTodos(updatedTodos);
   };
 
-  React.useEffect(() => {
-    console.log(todos);
-  }, [todos]);
-
   const toggleTodoCompleted = (todos: Todo[], todoId: string): Todo[] => {
     return todos.map((todo) => {
       if (todo.id === todoId) {
@@ -160,7 +157,9 @@ export default function TodoList() {
               justifyContent: 'space-between',
               paddingRight: '10px',
             }}>
-            <span>{todo.name}</span>
+            <span style={{ textDecoration: todo.completed ? 'line-through ' : '' }}>
+              {todo.name}
+            </span>
             <Checkbox onClick={(e) => handleCheckboxClick(e, todo.id)} checked={todo.completed} />
           </div>
         }>
@@ -223,10 +222,15 @@ export default function TodoList() {
         <Grid item xs={8}>
           <Box
             p={2}
-            sx={{ backgroundColor: '#DCE0E1', height: '70vh', overflowWrap: 'break-word' }}>
+            sx={{
+              backgroundColor: '#DCE0E1',
+              height: '70vh',
+              overflowWrap: 'break-word',
+            }}>
             <Typography variant="h5" component="h2" gutterBottom fontSize={'32px'}>
               {currentTodo?.name}
             </Typography>
+
             <Box height="100%">
               <p>{currentTodo?.text}</p>
             </Box>
