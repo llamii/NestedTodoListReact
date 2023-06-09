@@ -1,8 +1,9 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 import Todo from '../types/Todo';
+import { defaultData } from '../mock/defaultData';
 
 export default class TodoStore {
-  todos: Todo[] = [];
+  todos: Todo[] = defaultData;
   openModal = false;
   currentTodo: Todo | null = null;
 
@@ -16,10 +17,20 @@ export default class TodoStore {
       deleteCompletedTodos: action,
       toggleTodoCompleted: action,
     });
+
+    const storedTodos = localStorage.getItem('todos');
+    if (storedTodos) {
+      this.todos = JSON.parse(storedTodos);
+    }
   }
 
   get completedTodos(): Todo[] {
     return this.getCompletedTodos(this.todos);
+  }
+
+  private updateLocalStorage() {
+    const todosJson = JSON.stringify(this.todos);
+    localStorage.setItem('todos', todosJson);
   }
 
   private getCompletedTodos(todos: Todo[]): Todo[] {
@@ -54,6 +65,7 @@ export default class TodoStore {
     }
 
     this.openModal = false;
+    this.updateLocalStorage();
   };
 
   private generateUniqueId(): string {
@@ -64,6 +76,7 @@ export default class TodoStore {
 
   deleteCompletedTodos = () => {
     this.todos = this.deleteCompleted(this.todos);
+    this.updateLocalStorage();
   };
 
   toggleTodoCompleted = (todoId: string) => {
@@ -76,6 +89,7 @@ export default class TodoStore {
         this.updateParentCompletion(parentTodo);
       }
     }
+    this.updateLocalStorage();
   };
 
   private findTodoById(todos: Todo[], todoId: string): Todo | undefined {

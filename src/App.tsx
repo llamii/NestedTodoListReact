@@ -1,15 +1,17 @@
-import TodoList from './components/TodoList';
-import { Container, Typography } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 
-function App() {
+import { Container } from '@mui/material';
+import TodoList from './components/TodoList';
+import theme from './styles/theme';
+
+const App = () => {
   return (
-    <Container sx={{ display: 'flex', flexDirection: 'column', paddingTop: '32px' }}>
-      <Typography fontSize={'48px'} align="center" paddingBottom={'32px'}>
-        Todo List
-      </Typography>
-      <TodoList />
-    </Container>
+    <ThemeProvider theme={theme}>
+      <Container sx={{ paddingTop: '100px' }}>
+        <TodoList />
+      </Container>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

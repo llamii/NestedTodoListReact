@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Checkbox, Grid, Fab, Button, Typography } from '@mui/material';
+import { Box, Checkbox, Grid, Fab, Button, Typography, Container } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -11,6 +11,7 @@ import { CustomTree } from './CustomTree';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTodoModal from './CreateTodoModal';
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 
 const todoStore = new TodoStore();
 
@@ -72,76 +73,90 @@ const TodoList = observer(function TodoList() {
     ));
 
   return (
-    <Box display="flex" justifyContent="center" height="auto">
-      <Grid container sx={{ display: 'flex', alignItems: 'stretch' }}>
-        <Grid
-          item
-          xs={4}
-          sx={{
-            overflowY: 'hidden',
-            backgroundColor: '#FFFFFF',
-            paddingBottom: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}>
-          <Box p={2}>
-            <TreeView
-              aria-label="rich object"
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpanded={['root']}
-              defaultExpandIcon={<ChevronRightIcon />}
-              sx={{
-                height: 'auto',
-                flexGrow: 1,
-                maxWidth: 400,
-                overflow: 'hidden',
-                marginRight: '10px',
-              }}>
-              {renderTree(todos)}
-            </TreeView>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <Fab color="primary" size="small" aria-label="add" onClick={handleAddTodo}>
-              <AddIcon fontSize="small" />
-            </Fab>
-            <Fab color="error" size="small" aria-label="add" onClick={handleDeleteCompletedTodos}>
-              <DeleteIcon fontSize="small" />
-            </Fab>
-            <Button
-              variant="outlined"
-              disabled={!currentTodo}
-              sx={{ textTransform: 'none' }}
-              onClick={handleAddSubTodo}>
-              Добавить подзадачу
-            </Button>
-          </Box>
-          <CreateTodoModal
-            open={openModal}
-            onClose={handleModalClose}
-            onSave={handleSaveTodo}
-            parentId={currentTodo?.id || null}
-          />
-        </Grid>
-        <Grid item xs={8}>
-          <Box
-            p={2}
+    <Container maxWidth="lg">
+      <Box display="flex" justifyContent="center" height="auto">
+        <Grid container sx={{ display: 'flex', alignItems: 'stretch' }}>
+          <Grid
+            item
+            xs={12}
+            sm={4}
             sx={{
-              backgroundColor: '#DCE0E1',
-              height: '70vh',
-              overflowWrap: 'break-word',
+              overflowY: 'hidden',
+              backgroundColor: '#FFFFFF',
+              paddingBottom: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
             }}>
-            <Typography variant="h5" component="h2" gutterBottom fontSize={'32px'}>
-              {currentTodo?.name}
-            </Typography>
-
-            <Box height="100%">
-              <p>{currentTodo?.text}</p>
+            <Box p={2}>
+              <TreeView
+                aria-label="rich object"
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpanded={['root']}
+                defaultExpandIcon={<ChevronRightIcon />}
+                sx={{
+                  height: 'auto',
+                  flexGrow: 1,
+                  maxWidth: 400,
+                  overflow: 'hidden',
+                  marginRight: '10px',
+                }}>
+                {renderTree(todos)}
+              </TreeView>
             </Box>
-          </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <Fab
+                color="primary"
+                sx={{ boxShadow: 'none' }}
+                size="small"
+                aria-label="add"
+                onClick={handleAddTodo}>
+                <AddIcon fontSize="small" />
+              </Fab>
+              <Fab
+                color="error"
+                sx={{ boxShadow: 'none' }}
+                size="small"
+                aria-label="add"
+                onClick={handleDeleteCompletedTodos}>
+                <DeleteIcon fontSize="small" />
+              </Fab>
+              <Fab
+                color="secondary"
+                sx={{ boxShadow: 'none' }}
+                size="small"
+                aria-label="add"
+                onClick={handleAddSubTodo}>
+                <SubdirectoryArrowRightIcon fontSize="small" />
+              </Fab>
+            </Box>
+            <CreateTodoModal
+              open={openModal}
+              onClose={handleModalClose}
+              onSave={handleSaveTodo}
+              parentId={currentTodo?.id || null}
+            />
+          </Grid>
+          <Grid item xs={12} sm={8}>
+            <Box
+              p={2}
+              sx={{
+                backgroundColor: '#DCE0E1',
+                height: '70vh',
+                overflowWrap: 'break-word',
+              }}>
+              <Typography variant="h5" component="h2" gutterBottom fontSize={'32px'}>
+                {currentTodo?.name}
+              </Typography>
+
+              <Box height="100%">
+                <p>{currentTodo?.text}</p>
+              </Box>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </Container>
   );
 });
 
