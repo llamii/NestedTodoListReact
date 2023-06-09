@@ -113,14 +113,20 @@ export default function TodoList() {
           completed: !todo.completed,
         };
         if (Array.isArray(todo.children)) {
+          const allChildrenCompleted = todo.children.every((child) => child.completed);
           updatedTodo.children = toggleChildrenCompleted(todo.children, updatedTodo.completed);
+          if (allChildrenCompleted) {
+            updatedTodo.completed = updatedTodo.children.every((child) => child.completed);
+          }
         }
         return updatedTodo;
       } else if (Array.isArray(todo.children)) {
         const updatedChildren = toggleTodoCompleted(todo.children, todoId);
+        const allChildrenCompleted = updatedChildren.every((child) => child.completed);
         return {
           ...todo,
           children: updatedChildren,
+          completed: allChildrenCompleted,
         };
       }
       return todo;
