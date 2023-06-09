@@ -11,7 +11,6 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTodoModal from './CreateTodoModal';
 import { defaultData } from '../mock/defaultData';
-import CheckIcon from '@mui/icons-material/Check';
 
 export default function TodoList() {
   const [todos, setTodos] = React.useState<Todo[]>(defaultData);
