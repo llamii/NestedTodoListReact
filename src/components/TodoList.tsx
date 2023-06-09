@@ -1,146 +1,51 @@
-import * as React from 'react';
+import React from 'react';
+import { observer } from 'mobx-react-lite';
+import { Box, Checkbox, Grid, Fab, Button, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem, { TreeItemProps } from '@mui/lab/TreeItem';
-import Typography from '@mui/material/Typography';
-import { Box, Checkbox, Grid, Fab, Button } from '@mui/material';
 import Todo from '../types/Todo';
+import TodoStore from '../store/TodoStore';
 import { CustomTree } from './CustomTree';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTodoModal from './CreateTodoModal';
-import { defaultData } from '../mock/defaultData';
 
-export default function TodoList() {
-  const [todos, setTodos] = React.useState<Todo[]>(defaultData);
+const todoStore = new TodoStore();
 
-  const [openModal, setOpenModal] = React.useState(false);
-
-  const [currentTodo, setCurrentTodo] = React.useState<Todo | null>(null);
-
-  const CustomTreeItem = (props: TreeItemProps) => (
-    <TreeItem ContentComponent={CustomTree} {...props} />
-  );
+const TodoList = observer(function TodoList() {
+  const { todos, openModal, currentTodo } = todoStore;
 
   const handleAddTodo = () => {
-    setCurrentTodo(null);
-    setOpenModal(true);
+    todoStore.currentTodo = null;
+    todoStore.openModal = true;
   };
 
   const handleAddSubTodo = () => {
-    setOpenModal(true);
+    todoStore.openModal = true;
   };
 
   const handleModalClose = () => {
-    setOpenModal(false);
+    todoStore.openModal = false;
   };
 
   const handleSaveTodo = (newTodoName: string, newTodoText: string, parentId: string | null) => {
-    const newTodo: Todo = {
-      id: generateUniqueId(),
-      name: newTodoName,
-      text: newTodoText,
-      completed: false,
-      children: [],
-    };
-
-    const updateSubtask = (tasks: Todo[], taskId: string, subtask: Todo): Todo[] => {
-      return tasks.map((task) => {
-        if (task.id === taskId) {
-          return {
-            ...task,
-            children: task.children ? [...task.children, subtask] : [subtask],
-          };
-        } else if (task.children) {
-          return {
-            ...task,
-            children: updateSubtask(task.children, taskId, subtask),
-          };
-        }
-        return task;
-      });
-    };
-
-    setTodos((prevTodos) => {
-      if (parentId) {
-        return updateSubtask(prevTodos, parentId, newTodo);
-      } else {
-        return [...prevTodos, newTodo];
-      }
-    });
-
-    setOpenModal(false);
-  };
-
-  const generateUniqueId = (): string => {
-    const timestamp = new Date().getTime();
-    const random = Math.random().toString(36).substring(2, 10);
-    return `${timestamp}-${random}`;
-  };
-
-  const deleteCompletedTodos = (todos: Todo[]) => {
-    return todos.filter((todo: Todo) => {
-      if (todo.completed) {
-        return false;
-      }
-      if (Array.isArray(todo.children)) {
-        todo.children = deleteCompletedTodos(todo.children);
-      }
-      return true;
-    });
+    todoStore.addTodo(newTodoName, newTodoText, parentId);
   };
 
   const handleDeleteCompletedTodos = () => {
-    setTodos((prevTodos) => deleteCompletedTodos(prevTodos));
+    todoStore.deleteCompletedTodos();
   };
 
   const handleCheckboxClick = (e: React.MouseEvent<HTMLButtonElement>, todoId: string) => {
     e.stopPropagation();
-    const updatedTodos = toggleTodoCompleted(todos, todoId);
-    setTodos(updatedTodos);
+    todoStore.toggleTodoCompleted(todoId);
   };
 
-  const toggleTodoCompleted = (todos: Todo[], todoId: string): Todo[] => {
-    return todos.map((todo) => {
-      if (todo.id === todoId) {
-        const updatedTodo = {
-          ...todo,
-          completed: !todo.completed,
-        };
-        if (Array.isArray(todo.children)) {
-          const allChildrenCompleted = todo.children.every((child) => child.completed);
-          updatedTodo.children = toggleChildrenCompleted(todo.children, updatedTodo.completed);
-          if (allChildrenCompleted) {
-            updatedTodo.completed = updatedTodo.children.every((child) => child.completed);
-          }
-        }
-        return updatedTodo;
-      } else if (Array.isArray(todo.children)) {
-        const updatedChildren = toggleTodoCompleted(todo.children, todoId);
-        const allChildrenCompleted = updatedChildren.every((child) => child.completed);
-        return {
-          ...todo,
-          children: updatedChildren,
-          completed: allChildrenCompleted,
-        };
-      }
-      return todo;
-    });
-  };
-
-  const toggleChildrenCompleted = (children: Todo[], completed: boolean): Todo[] => {
-    return children.map((child) => {
-      const updatedChild = {
-        ...child,
-        completed,
-      };
-      if (Array.isArray(child.children)) {
-        updatedChild.children = toggleChildrenCompleted(child.children, completed);
-      }
-      return updatedChild;
-    });
-  };
+  const CustomTreeItem = (props: TreeItemProps) => (
+    <TreeItem ContentComponent={CustomTree} {...props} />
+  );
 
   const renderTree = (todos: Todo[]) =>
     todos.map((todo) => (
@@ -149,7 +54,7 @@ export default function TodoList() {
         nodeId={todo.id}
         label={
           <div
-            onClick={() => setCurrentTodo(todo)}
+            onClick={() => (todoStore.currentTodo = todo)}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -238,4 +143,6 @@ export default function TodoList() {
       </Grid>
     </Box>
   );
-}
+});
+
+export default TodoList;

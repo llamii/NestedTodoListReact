@@ -5,4 +5,5 @@ export default interface Todo {
 
   text?: string;
   children?: Todo[];
+  parent?: string;
 }
