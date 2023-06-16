@@ -1,5 +1,4 @@
 import { Box, Checkbox, Container, Fab, Grid, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
 import TreeItem, { TreeItemProps } from '@mui/lab/TreeItem';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -8,6 +7,7 @@ import CreateTodoModal from './CreateTodoModal';
 import { CustomTree } from './CustomTree';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React from 'react';
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import Todo from '../types/Todo';
 import TodoStore from '../store/TodoStore';
