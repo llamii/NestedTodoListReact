@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable } from 'mobx';
+
 import Todo from '../types/Todo';
 import { defaultData } from '../mock/defaultData';
 
@@ -6,7 +7,6 @@ export default class TodoStore {
   todos: Todo[] = defaultData;
   openModal = false;
   currentTodo: Todo | null = null;
-
 
   constructor() {
     makeObservable(this, {
@@ -17,6 +17,12 @@ export default class TodoStore {
       addTodo: action,
       deleteCompletedTodos: action,
       toggleTodoCompleted: action,
+      updateLocalStorage: action,
+      generateUniqueId: action,
+      deleteCompleted: action,
+      toggleChildrenCompletion: action,
+      updateParentCompletion: action,
+      setCurrentTodo: action,
     });
 
     const storedTodos = localStorage.getItem('todos');
@@ -29,12 +35,12 @@ export default class TodoStore {
     return this.getCompletedTodos(this.todos);
   }
 
-  private updateLocalStorage() {
+  updateLocalStorage() {
     const todosJson = JSON.stringify(this.todos);
     localStorage.setItem('todos', todosJson);
   }
 
-  private getCompletedTodos(todos: Todo[]): Todo[] {
+  getCompletedTodos(todos: Todo[]): Todo[] {
     return todos.reduce((completed: Todo[], todo: Todo) => {
       if (todo.completed) {
         completed.push(todo);
@@ -46,7 +52,7 @@ export default class TodoStore {
     }, []);
   }
 
-  addTodo = (newTodoName: string, newTodoText: string, parentId: string | null) => {
+  addTodo(newTodoName: string, newTodoText: string, parentId: string | null) {
     const newTodo: Todo = {
       id: this.generateUniqueId(),
       name: newTodoName,
@@ -68,20 +74,20 @@ export default class TodoStore {
     this.openModal = false;
 
     this.updateLocalStorage();
-  };
+  }
 
-  private generateUniqueId(): string {
+  generateUniqueId() {
     const timestamp = new Date().getTime();
     const random = Math.random().toString(36).substring(2, 10);
     return `${timestamp}-${random}`;
   }
 
-  deleteCompletedTodos = () => {
+  deleteCompletedTodos() {
     this.todos = this.deleteCompleted(this.todos);
     this.updateLocalStorage();
-  };
+  }
 
-  toggleTodoCompleted = (todoId: string) => {
+  toggleTodoCompleted(todoId: string) {
     const todo = this.findTodoById(this.todos, todoId);
     if (todo) {
       todo.completed = !todo.completed;
@@ -92,9 +98,9 @@ export default class TodoStore {
       }
     }
     this.updateLocalStorage();
-  };
+  }
 
-  private findTodoById(todos: Todo[], todoId: string): Todo | undefined {
+  findTodoById(todos: Todo[], todoId: string): Todo | undefined {
     for (const todo of todos) {
       if (todo.id === todoId) {
         return todo;
@@ -109,7 +115,7 @@ export default class TodoStore {
     return undefined;
   }
 
-  private findParentTodoById(todos: Todo[], todoId: string): Todo | undefined {
+  findParentTodoById(todos: Todo[], todoId: string): Todo | undefined {
     for (const todo of todos) {
       if (Array.isArray(todo.children)) {
         if (todo.children.some((child) => child.id === todoId)) {
@@ -124,7 +130,7 @@ export default class TodoStore {
     return undefined;
   }
 
-  private deleteCompleted(todos: Todo[]): Todo[] {
+  deleteCompleted(todos: Todo[]): Todo[] {
     return todos.filter((todo: Todo) => {
       if (todo.completed) {
         return false;
@@ -136,7 +142,7 @@ export default class TodoStore {
     });
   }
 
-  private toggleChildrenCompletion(todo: Todo) {
+  toggleChildrenCompletion(todo: Todo) {
     if (Array.isArray(todo.children)) {
       todo.children.forEach((child) => {
         child.completed = todo.completed;
@@ -145,7 +151,7 @@ export default class TodoStore {
     }
   }
 
-  private updateParentCompletion(parentTodo: Todo) {
+  updateParentCompletion(parentTodo: Todo) {
     if (Array.isArray(parentTodo.children)) {
       parentTodo.completed = parentTodo.children.every((child) => child.completed);
       const grandParentTodo = this.findParentTodoById(this.todos, parentTodo.id);
@@ -154,4 +160,8 @@ export default class TodoStore {
       }
     }
   }
+
+  setCurrentTodo = action((todo: Todo | null) => {
+    this.currentTodo = todo;
+  });
 }

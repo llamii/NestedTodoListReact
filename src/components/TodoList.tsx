@@ -1,17 +1,19 @@
-import React from 'react';
-import { observer } from 'mobx-react-lite';
-import { Box, Checkbox, Grid, Fab, Typography, Container } from '@mui/material';
-import TreeView from '@mui/lab/TreeView';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { Box, Checkbox, Container, Fab, Grid, Typography } from '@mui/material';
+import React, { useEffect } from 'react';
 import TreeItem, { TreeItemProps } from '@mui/lab/TreeItem';
+
+import AddIcon from '@mui/icons-material/Add';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CreateTodoModal from './CreateTodoModal';
+import { CustomTree } from './CustomTree';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import Todo from '../types/Todo';
 import TodoStore from '../store/TodoStore';
-import { CustomTree } from './CustomTree';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CreateTodoModal from './CreateTodoModal';
-import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
+import TreeView from '@mui/lab/TreeView';
+import { action } from 'mobx';
+import { observer } from 'mobx-react-lite';
 import { styled } from '@mui/system';
 
 const todoStore = new TodoStore();
@@ -20,28 +22,41 @@ const TodoList = observer(function TodoList() {
   const { todos, openModal, currentTodo } = todoStore;
 
   const handleAddTodo = () => {
-    todoStore.openModal = true;
-    todoStore.currentTodo = null;
+    action(() => {
+      todoStore.openModal = true;
+      todoStore.currentTodo = null;
+    })();
   };
+
   const handleAddSubTodo = () => {
-    todoStore.openModal = true;
+    action(() => {
+      todoStore.openModal = true;
+    })();
   };
 
   const handleModalClose = () => {
-    todoStore.openModal = false;
+    action(() => {
+      todoStore.openModal = false;
+    })();
   };
 
   const handleSaveTodo = (newTodoName: string, newTodoText: string, parentId: string | null) => {
-    todoStore.addTodo(newTodoName, newTodoText, parentId);
+    action(() => {
+      todoStore.addTodo(newTodoName, newTodoText, parentId);
+    })();
   };
 
   const handleDeleteCompletedTodos = () => {
-    todoStore.deleteCompletedTodos();
+    action(() => {
+      todoStore.deleteCompletedTodos();
+    })();
   };
 
   const handleCheckboxClick = (e: React.MouseEvent<HTMLButtonElement>, todoId: string) => {
-    e.stopPropagation();
-    todoStore.toggleTodoCompleted(todoId);
+    action(() => {
+      e.stopPropagation();
+      todoStore.toggleTodoCompleted(todoId);
+    })();
   };
 
   const CustomTreeItem = (props: TreeItemProps) => (
@@ -54,7 +69,7 @@ const TodoList = observer(function TodoList() {
         key={todo.id}
         nodeId={todo.id}
         label={
-          <StyledTodo onClick={() => (todoStore.currentTodo = todo)}>
+          <StyledTodo onClick={() => action(() => (todoStore.currentTodo = todo))()}>
             <StyledTodoSpan isCompleted={todo.completed}>{todo.name}</StyledTodoSpan>
             <Checkbox onClick={(e) => handleCheckboxClick(e, todo.id)} checked={todo.completed} />
           </StyledTodo>
